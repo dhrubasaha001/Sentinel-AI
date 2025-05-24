@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sentinel AI - Threat Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col items-center">
+  <header class="bg-gray-900 text-white w-full text-center py-6 text-2xl font-bold">
+    🛡️ Sentinel AI – Threat Detector
+  </header>
+
+  <main class="mt-10 w-11/12 max-w-xl bg-white p-8 rounded-2xl shadow-md">
+    <textarea id="inputText" placeholder="Paste email, message, or content here..."
+      class="w-full p-4 rounded-lg border border-gray-300 resize-y min-h-[150px] text-base focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+
+    <button onclick="analyzeThreat()"
+      class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg text-lg font-medium transition-colors duration-300">
+      Detect Threat
+    </button>
+
+    <div id="resultBox" style="display: none;"
+      class="mt-6 p-6 rounded-xl border-l-8 bg-gray-100">
+      <h3 id="threatLevel" class="text-xl font-semibold mb-2"></h3>
+      <p class="mb-1"><strong>Reason:</strong> <span id="reason"></span></p>
+      <p><strong>Suggestion:</strong> <span id="suggestion"></span></p>
+    </div>
+  </main>
+
+  <script>
+    async function analyzeThreat() {
+  const input = document.getElementById('inputText').value;
+  if (!input.trim()) return;
+
+  const response = await fetch('/analyze', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: input })
+  });
+
+  const res = await response.json();
+
+  const resultBox = document.getElementById('resultBox');
+  const level = res.threat_level.toLowerCase();
+
+  resultBox.style.display = 'block';
+  resultBox.className = `mt-6 p-6 rounded-xl border-l-8 bg-gray-100 ${
+    level === 'safe' ? 'border-green-500' :
+    level === 'suspicious' ? 'border-yellow-500' :
+    'border-red-500'
+  }`;
+  document.getElementById('threatLevel').textContent = `⚠️ Threat Level: ${res.threat_level}`;
+  document.getElementById('reason').textContent = res.reason;
+  document.getElementById('suggestion').textContent = res.suggestion;
+}
+  </script>
+</body>
+</html>

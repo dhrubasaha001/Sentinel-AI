@@ -1,3 +1,5 @@
+![MIT License](https://img.shields.io/badge/License-MIT-green.svg)
+
 # 🛡️ Sentinel AI - Phishing Detection System
 
 An intelligent threat detection system designed to identify phishing, scams, and malicious intent in real-time using Natural Language Processing (NLP) and advanced pattern recognition. This AI-powered solution enhances digital safety by analyzing text-based content such as emails, messages, or documents.
@@ -229,16 +231,13 @@ For support, email dhrubadeveloper@gmail.com or create an issue on GitHub.
 - Flask community for the excellent framework
 - Open source security researchers for threat intelligence
 
-## 📈 Roadmap
 
-- [ ] Machine learning model integration
-- [ ] Email attachment analysis
-- [ ] Multi-language support
-- [ ] Advanced reporting dashboard
-- [ ] API authentication
-- [ ] Webhook notifications
-- [ ] Mobile application
+
 
 ---
+## License
+
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+
 
 **Made with ❤️ for digital security**

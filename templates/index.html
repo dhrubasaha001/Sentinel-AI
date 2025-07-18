@@ -1,59 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sentinel AI - Threat Detector</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel AI - Phishing Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result.safe {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .result.low {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .result.medium {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .result.high {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .threat-level {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .details {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+        }
+
+        .details h4 {
+            margin-bottom: 5px;
+        }
+
+        .details ul {
+            margin-left: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            display: none;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col items-center">
-  <header class="bg-gray-900 text-white w-full text-center py-6 text-2xl font-bold">
-    🛡️ Sentinel AI – Threat Detector
-  </header>
-
-  <main class="mt-10 w-11/12 max-w-xl bg-white p-8 rounded-2xl shadow-md">
-    <textarea id="inputText" placeholder="Paste email, message, or content here..."
-      class="w-full p-4 rounded-lg border border-gray-300 resize-y min-h-[150px] text-base focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-
-    <button onclick="analyzeThreat()"
-      class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg text-lg font-medium transition-colors duration-300">
-      Detect Threat
-    </button>
-
-    <div id="resultBox" style="display: none;"
-      class="mt-6 p-6 rounded-xl border-l-8 bg-gray-100">
-      <h3 id="threatLevel" class="text-xl font-semibold mb-2"></h3>
-      <p class="mb-1"><strong>Reason:</strong> <span id="reason"></span></p>
-      <p><strong>Suggestion:</strong> <span id="suggestion"></span></p>
+<body>
+    <div class="container">
+        <h1>🛡️ Sentinel AI</h1>
+        <p class="subtitle">Intelligent Phishing Detection System</p>
+        
+        <div>
+            <textarea id="textInput" placeholder="Paste your email, message, or any text content here to analyze for phishing threats..."></textarea>
+            
+            <div class="button-container">
+                <button id="analyzeBtn" onclick="analyzeText()">Analyze Text</button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <p>🔍 Analyzing text for threats...</p>
+            </div>
+            
+            <div class="error" id="error"></div>
+            
+            <div class="result" id="result">
+                <div class="threat-level" id="threatLevel"></div>
+                <p><strong>Reason:</strong> <span id="reason"></span></p>
+                <p><strong>Suggestion:</strong> <span id="suggestion"></span></p>
+                <div class="details" id="details"></div>
+            </div>
+        </div>
     </div>
-  </main>
 
-  <script>
-    async function analyzeThreat() {
-  const input = document.getElementById('inputText').value;
-  if (!input.trim()) return;
-
-  const response = await fetch('/analyze', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: input })
-  });
-
-  const res = await response.json();
-
-  const resultBox = document.getElementById('resultBox');
-  const level = res.threat_level.toLowerCase();
-
-  resultBox.style.display = 'block';
-  resultBox.className = `mt-6 p-6 rounded-xl border-l-8 bg-gray-100 ${
-    level === 'safe' ? 'border-green-500' :
-    level === 'suspicious' ? 'border-yellow-500' :
-    'border-red-500'
-  }`;
-  document.getElementById('threatLevel').textContent = `⚠️ Threat Level: ${res.threat_level}`;
-  document.getElementById('reason').textContent = res.reason;
-  document.getElementById('suggestion').textContent = res.suggestion;
-}
-  </script>
+    <script>
+        async function analyzeText() {
+            const textInput = document.getElementById('textInput');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            const error = document.getElementById('error');
+            
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                showError('Please enter some text to analyze.');
+                return;
+            }
+            
+            // Show loading state
+            analyzeBtn.disabled = true;
+            loading.style.display = 'block';
+            result.style.display = 'none';
+            error.style.display = 'none';
+            
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                displayResult(data);
+                
+            } catch (err) {
+                showError(`Error analyzing text: ${err.message}`);
+            } finally {
+                analyzeBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+        
+        function displayResult(data) {
+            const result = document.getElementById('result');
+            const threatLevel = document.getElementById('threatLevel');
+            const reason = document.getElementById('reason');
+            const suggestion = document.getElementById('suggestion');
+            const details = document.getElementById('details');
+            
+            // Set threat level and styling
+            const level = data.threat_level.toLowerCase();
+            threatLevel.textContent = `Threat Level: ${data.threat_level}`;
+            reason.textContent = data.reason;
+            suggestion.textContent = data.suggestion;
+            
+            // Set result class based on threat level
+            result.className = `result ${level}`;
+            
+            // Display details if available
+            if (data.details && Object.keys(data.details).length > 0) {
+                let detailsHTML = '<h4>Details:</h4>';
+                
+                if (data.details.flagged_domains) {
+                    detailsHTML += `<p><strong>Flagged Domains:</strong> ${data.details.flagged_domains.join(', ')}</p>`;
+                }
+                
+                if (data.details.unsafe_urls) {
+                    detailsHTML += `<p><strong>Unsafe URLs:</strong></p><ul>`;
+                    data.details.unsafe_urls.forEach(url => {
+                        detailsHTML += `<li>${url}</li>`;
+                    });
+                    detailsHTML += '</ul>';
+                }
+                
+                if (data.details.suspicious_urls) {
+                    detailsHTML += `<p><strong>Suspicious URLs:</strong></p><ul>`;
+                    data.details.suspicious_urls.forEach(url => {
+                        detailsHTML += `<li>${url}</li>`;
+                    });
+                    detailsHTML += '</ul>';
+                }
+                
+                if (data.details.keywords_found && data.details.keywords_found.length > 0) {
+                    detailsHTML += `<p><strong>Phishing Keywords Found:</strong> ${data.details.keywords_found.join(', ')}</p>`;
+                }
+                
+                if (data.details.urls_found && data.details.urls_found.length > 0) {
+                    detailsHTML += `<p><strong>All URLs Found:</strong></p><ul>`;
+                    data.details.urls_found.forEach(url => {
+                        detailsHTML += `<li>${url}</li>`;
+                    });
+                    detailsHTML += '</ul>';
+                }
+                
+                details.innerHTML = detailsHTML;
+                details.style.display = 'block';
+            } else {
+                details.style.display = 'none';
+            }
+            
+            result.style.display = 'block';
+        }
+        
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+        
+        // Allow Enter key to submit
+        document.getElementById('textInput').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                analyzeText();
+            }
+        });
+    </script>
 </body>
 </html>
